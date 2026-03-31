@@ -881,7 +881,7 @@
             <form id="addForm">
                 <div class="form-group">
                     <label for="cliente">Cliente *</label>
-                    <input type="text" id="cliente" name="cliente" required>
+                    <input type="text" id="cliente" name="cliente" required maxlength="200">
                 </div>
                 <div class="form-group">
                     <label for="data">Data *</label>
@@ -893,19 +893,19 @@
                 </div>
                 <div class="form-group">
                     <label for="vendedor">Vendedor</label>
-                    <input type="text" id="vendedor" name="vendedor">
+                    <input type="text" id="vendedor" name="vendedor" maxlength="100">
                 </div>
                 <div class="form-group">
                     <label for="degustador">Degustador</label>
-                    <input type="text" id="degustador" name="degustador">
+                    <input type="text" id="degustador" name="degustador" maxlength="200">
                 </div>
                 <div class="form-group">
                     <label for="responsavel">Responsável</label>
-                    <input type="text" id="responsavel" name="responsavel">
+                    <input type="text" id="responsavel" name="responsavel" maxlength="100">
                 </div>
                 <div class="form-group">
                     <label for="endereco">Endereço</label>
-                    <textarea id="endereco" name="endereco"></textarea>
+                    <textarea id="endereco" name="endereco" maxlength="500"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="kit">Kit</label>
@@ -959,7 +959,7 @@
 
     <script>
         // DEGUSTAÇÕES — atualizado automaticamente pelo sincronizar_portal.py
-// Última sincronização: 31/03/2026 às 19:32
+// Última sincronização: 31/03/2026 às 19:41
 // NÃO EDITE MANUALMENTE ESTA SEÇÃO
 const DEGUSTACOES = [
   {
@@ -1285,16 +1285,37 @@ const DEGUSTACOES = [
                 btn.disabled = true;
 
                 const payload = {
-                    cliente:     document.getElementById('cliente').value,
+                    cliente:     document.getElementById('cliente').value.trim(),
                     data:        document.getElementById('data').value,
                     horario:     document.getElementById('horario').value,
-                    vendedor:    document.getElementById('vendedor').value,
-                    degustador:  document.getElementById('degustador').value,
-                    responsavel: document.getElementById('responsavel').value,
-                    endereco:    document.getElementById('endereco').value,
+                    vendedor:    document.getElementById('vendedor').value.trim(),
+                    degustador:  document.getElementById('degustador').value.trim(),
+                    responsavel: document.getElementById('responsavel').value.trim(),
+                    endereco:    document.getElementById('endereco').value.trim(),
                     kit:         document.getElementById('kit').value,
                     status:      document.getElementById('status').value,
                 };
+
+                // Validação client-side
+                if (!payload.cliente) {
+                    alert('O campo Cliente é obrigatório.');
+                    btn.textContent = 'Adicionar ao Portal';
+                    btn.disabled = false;
+                    return;
+                }
+                if (!payload.data) {
+                    alert('O campo Data é obrigatório.');
+                    btn.textContent = 'Adicionar ao Portal';
+                    btn.disabled = false;
+                    return;
+                }
+                const statusValidos = ['Agendado', 'Em andamento', 'Concluído', 'Cancelado'];
+                if (!statusValidos.includes(payload.status)) {
+                    alert('Status inválido.');
+                    btn.textContent = 'Adicionar ao Portal';
+                    btn.disabled = false;
+                    return;
+                }
 
                 try {
                     const resp = await fetch(
