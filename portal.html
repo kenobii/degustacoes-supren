@@ -578,6 +578,7 @@
         <p>Acesse os formulários do seu evento abaixo</p>
         <div class="hero-buttons">
             <a href="manual_degustacoes_v4.pdf" target="_blank" class="btn btn-primary">📖 Manual de Degustações</a>
+            <button class="btn btn-secondary" onclick="openModal()">+ Nova Degustação</button>
             <button class="btn btn-secondary" onclick="location.reload()">🔄 Atualizar</button>
         </div>
     </section>
@@ -695,7 +696,7 @@
 
     <script>
         // DEGUSTAÇÕES — atualizado automaticamente pelo sincronizar_portal.py
-// Última sincronização: 31/03/2026 às 10:19
+// Última sincronização: 31/03/2026 às 10:27
 // NÃO EDITE MANUALMENTE ESTA SEÇÃO
 const DEGUSTACOES = [
   {
@@ -781,6 +782,20 @@ const DEGUSTACOES = [
     "kit": "Kit 01",
     "contato": "",
     "status": "Confirmado"
+  },
+  {
+    "id": "334d10bf-fb1d-810a-861e-cee900608273",
+    "cliente": "TESTE - Pode apagar",
+    "data": "2026-04-01",
+    "data_br": "01/04/2026",
+    "horario": "",
+    "vendedor": "",
+    "degustador": "",
+    "responsavel": "",
+    "endereco": "",
+    "kit": "Kit 01",
+    "contato": "",
+    "status": "Agendado"
   },
   {
     "id": "330d10bf-fb1d-80eb-ae25-e4c9795230d0",
@@ -1021,27 +1036,52 @@ const DEGUSTACOES = [
             const modal = document.getElementById('addModal');
             const form = document.getElementById('addForm');
 
-            form.addEventListener('submit', e => {
+            form.addEventListener('submit', async e => {
                 e.preventDefault();
+                const btn = form.querySelector('.btn-submit');
+                btn.textContent = 'Salvando...';
+                btn.disabled = true;
 
-                const newDegustation = {
-                    id: Date.now().toString(),
-                    cliente: document.getElementById('cliente').value,
-                    data: document.getElementById('data').value,
-                    horario: document.getElementById('horario').value,
-                    vendedor: document.getElementById('vendedor').value,
-                    degustador: document.getElementById('degustador').value,
+                const payload = {
+                    cliente:     document.getElementById('cliente').value,
+                    data:        document.getElementById('data').value,
+                    horario:     document.getElementById('horario').value,
+                    vendedor:    document.getElementById('vendedor').value,
+                    degustador:  document.getElementById('degustador').value,
                     responsavel: document.getElementById('responsavel').value,
-                    endereco: document.getElementById('endereco').value,
-                    kit: document.getElementById('kit').value,
-                    status: document.getElementById('status').value
+                    endereco:    document.getElementById('endereco').value,
+                    kit:         document.getElementById('kit').value,
+                    status:      document.getElementById('status').value,
                 };
 
-                DEGUSTACOES.push(newDegustation);
-                closeModal();
-                form.reset();
-                renderPage();
-                setupSearch();
+                try {
+                    const resp = await fetch(
+                        'https://xkmywhlscdwyacfgqwsd.supabase.co/functions/v1/nova-degustacao',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-api-key': 'X2fsXqvMODh6igL9qgFKyHMEFdhr1vwKYfQrPkRIBKQ',
+                            },
+                            body: JSON.stringify(payload),
+                        }
+                    );
+
+                    if (!resp.ok) throw new Error(`Erro ${resp.status}`);
+
+                    // Adiciona localmente para feedback imediato
+                    DEGUSTACOES.push({ id: Date.now().toString(), data_br: payload.data, ...payload });
+                    closeModal();
+                    form.reset();
+                    renderPage();
+                    setupSearch();
+                    alert('Degustação cadastrada com sucesso! Ela já está no Supabase e no Notion.');
+                } catch (err) {
+                    alert('Erro ao cadastrar: ' + err.message);
+                } finally {
+                    btn.textContent = 'Adicionar ao Portal';
+                    btn.disabled = false;
+                }
             });
         }
 
