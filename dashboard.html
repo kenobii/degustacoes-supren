@@ -55,12 +55,89 @@
         .hero {
             background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
             color: white;
-            padding: 2.5rem 2rem 2rem;
+            padding: 2.5rem 2rem 1.5rem;
             text-align: center;
         }
 
         .hero h1 { font-size: 2rem; font-weight: 400; margin-bottom: 0.4rem; }
         .hero p { opacity: 0.9; font-size: 0.95rem; }
+
+        /* Filter bar */
+        .filter-bar {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0.9rem 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.88rem;
+            font-family: 'DM Sans', sans-serif;
+            background: white;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .filter-select:focus { outline: none; border-color: #2E7D32; }
+
+        .filter-pills {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.15s;
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .pill:hover { background: #e0e0e0; }
+
+        .pill.active {
+            color: white;
+            border-color: transparent;
+        }
+
+        .pill[data-status="Todos"].active        { background: #1B5E20; }
+        .pill[data-status="Concluído"].active    { background: #388E3C; }
+        .pill[data-status="Finalizado"].active   { background: #1B5E20; }
+        .pill[data-status="Confirmado"].active   { background: #1565C0; }
+        .pill[data-status="Agendado"].active     { background: #E65100; }
+
+        .filter-count {
+            margin-left: auto;
+            font-size: 0.85rem;
+            color: #888;
+            white-space: nowrap;
+        }
 
         /* Main container */
         .container {
@@ -108,29 +185,22 @@
             opacity: 0.55;
         }
 
-        .kpi-total     { border-color: #1B5E20; }
+        .kpi-total      { border-color: #1B5E20; }
         .kpi-total .kpi-value { color: #1B5E20; }
 
-        .kpi-concluido { border-color: #4CAF50; }
+        .kpi-concluido  { border-color: #4CAF50; }
         .kpi-concluido .kpi-value { color: #388E3C; }
 
         .kpi-confirmado { border-color: #2196F3; }
         .kpi-confirmado .kpi-value { color: #1565C0; }
 
-        .kpi-agendado  { border-color: #FF9800; }
+        .kpi-agendado   { border-color: #FF9800; }
         .kpi-agendado .kpi-value { color: #E65100; }
 
         /* Charts grid */
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.2rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .charts-grid-full {
-            display: grid;
-            grid-template-columns: 1fr;
             gap: 1.2rem;
             margin-bottom: 1.2rem;
         }
@@ -150,14 +220,15 @@
             font-weight: 600;
         }
 
-        .chart-wrapper {
-            position: relative;
-            height: 260px;
-        }
+        .chart-wrapper { position: relative; height: 260px; }
+        .chart-wrapper-tall { position: relative; height: 320px; }
 
-        .chart-wrapper-tall {
-            position: relative;
-            height: 320px;
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #aaa;
+            font-size: 0.95rem;
         }
 
         /* Footer */
@@ -173,6 +244,8 @@
             .charts-grid { grid-template-columns: 1fr; }
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
             .hero h1 { font-size: 1.5rem; }
+            .filter-bar { padding: 0.9rem 1rem; gap: 0.8rem; }
+            .filter-count { width: 100%; }
         }
     </style>
 </head>
@@ -189,6 +262,33 @@
 <div class="hero">
     <h1>Dashboard de Degustações</h1>
     <p id="heroSub">Carregando dados...</p>
+</div>
+
+<!-- Filter bar -->
+<div class="filter-bar">
+    <div class="filter-group">
+        <label>Período</label>
+        <select class="filter-select" id="filterPeriod">
+            <option value="all">Todos</option>
+            <option value="thismonth">Este mês</option>
+            <option value="3m">Últimos 3 meses</option>
+            <option value="6m">Últimos 6 meses</option>
+            <option value="12m">Último ano</option>
+        </select>
+    </div>
+
+    <div class="filter-group">
+        <label>Status</label>
+        <div class="filter-pills" id="statusPills">
+            <span class="pill active" data-status="Todos">Todos</span>
+            <span class="pill" data-status="Concluído">Concluído</span>
+            <span class="pill" data-status="Finalizado">Finalizado</span>
+            <span class="pill" data-status="Confirmado">Confirmado</span>
+            <span class="pill" data-status="Agendado">Agendado</span>
+        </div>
+    </div>
+
+    <div class="filter-count" id="filterCount"></div>
 </div>
 
 <div class="container">
@@ -236,9 +336,9 @@
 
 <script>
 // DEGUSTAÇÕES — atualizado automaticamente pelo sincronizar_portal.py
-// Última sincronização: 31/03/2026 às 10:28
+// Última sincronização: 31/03/2026 às 12:55
 // NÃO EDITE MANUALMENTE ESTA SEÇÃO
-const DEGUSTACOES = [
+const TODAS_DEGUSTACOES = [
   {
     "id": "322d10bf-fb1d-80cb-b7d7-fc949a0fe91e",
     "cliente": "Dedé Doces e Queijos",
@@ -409,6 +509,10 @@ const DEGUSTACOES = [
   }
 ];
 
+// ── Estado dos filtros ─────────────────────────────────────────────────────────
+
+const filtros = { period: 'all', status: 'Todos' };
+
 // ── Utilitários ────────────────────────────────────────────────────────────────
 
 function nomeMes(isoDate) {
@@ -418,17 +522,40 @@ function nomeMes(isoDate) {
             .replace('.', '').replace(' de ', '/');
 }
 
-function count(arr, key, val) {
-    return arr.filter(d => d[key] === val).length;
+function getFiltered() {
+    const now = new Date();
+    let dados = TODAS_DEGUSTACOES;
+
+    if (filtros.period !== 'all') {
+        const meses = { 'thismonth': 0, '3m': 3, '6m': 6, '12m': 12 };
+        const n = meses[filtros.period];
+        let inicio;
+        if (filtros.period === 'thismonth') {
+            inicio = new Date(now.getFullYear(), now.getMonth(), 1);
+        } else {
+            inicio = new Date(now);
+            inicio.setMonth(inicio.getMonth() - n);
+        }
+        dados = dados.filter(d => {
+            if (!d.data) return false;
+            return new Date(d.data + 'T12:00:00') >= inicio;
+        });
+    }
+
+    if (filtros.status !== 'Todos') {
+        dados = dados.filter(d => d.status === filtros.status);
+    }
+
+    return dados;
 }
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
 
-function renderKPIs() {
-    const total      = DEGUSTACOES.length;
-    const concluido  = count(DEGUSTACOES, 'status', 'Concluído');
-    const confirmado = count(DEGUSTACOES, 'status', 'Confirmado');
-    const agendado   = count(DEGUSTACOES, 'status', 'Agendado');
+function renderKPIs(dados) {
+    const total      = dados.length;
+    const concluido  = dados.filter(d => d.status === 'Concluído' || d.status === 'Finalizado').length;
+    const confirmado = dados.filter(d => d.status === 'Confirmado').length;
+    const agendado   = dados.filter(d => d.status === 'Agendado').length;
     const pctConc    = total ? Math.round(100 * concluido / total) : 0;
 
     const kpis = [
@@ -445,42 +572,56 @@ function renderKPIs() {
             <div class="kpi-sub">${k.sub}</div>
         </div>
     `).join('');
+
+    document.getElementById('filterCount').textContent =
+        `${total} de ${TODAS_DEGUSTACOES.length} degustações`;
+}
+
+// ── Instâncias dos gráficos ───────────────────────────────────────────────────
+
+const charts = {};
+
+function updateChart(id, type, data, options) {
+    if (charts[id]) {
+        charts[id].data = data;
+        charts[id].options = { ...charts[id].options, ...options };
+        charts[id].update();
+    } else {
+        charts[id] = new Chart(document.getElementById(id), { type, data, options });
+    }
 }
 
 // ── Gráfico: Status ────────────────────────────────────────────────────────────
 
-function renderChartStatus() {
-    const statusLabels = ['Concluído', 'Confirmado', 'Agendado'];
-    const statusColors = ['#4CAF50', '#2196F3', '#FF9800'];
-    const data = statusLabels.map(s => count(DEGUSTACOES, 'status', s));
+function renderChartStatus(dados) {
+    const statusLabels = ['Concluído', 'Finalizado', 'Confirmado', 'Agendado'];
+    const statusColors = ['#4CAF50', '#1B5E20', '#2196F3', '#FF9800'];
+    const values = statusLabels.map(s => dados.filter(d => d.status === s).length);
+    const total = dados.length;
 
-    new Chart(document.getElementById('chartStatus'), {
-        type: 'doughnut',
-        data: {
-            labels: statusLabels,
-            datasets: [{ data, backgroundColor: statusColors, borderWidth: 2, borderColor: '#fff' }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { padding: 16, font: { family: 'DM Sans' } } },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.label}: ${ctx.raw} (${Math.round(100 * ctx.raw / DEGUSTACOES.length)}%)`
-                    }
+    updateChart('chartStatus', 'doughnut', {
+        labels: statusLabels,
+        datasets: [{ data: values, backgroundColor: statusColors, borderWidth: 2, borderColor: '#fff' }]
+    }, {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 16, font: { family: 'DM Sans' } } },
+            tooltip: {
+                callbacks: {
+                    label: ctx => ` ${ctx.label}: ${ctx.raw} (${total ? Math.round(100 * ctx.raw / total) : 0}%)`
                 }
-            },
-            cutout: '62%'
-        }
+            }
+        },
+        cutout: '62%'
     });
 }
 
 // ── Gráfico: Por Mês ───────────────────────────────────────────────────────────
 
-function renderChartMes() {
+function renderChartMes(dados) {
     const meses = {};
-    DEGUSTACOES.forEach(d => {
+    dados.forEach(d => {
         const m = nomeMes(d.data);
         meses[m] = (meses[m] || 0) + 1;
     });
@@ -488,36 +629,32 @@ function renderChartMes() {
     const labels = Object.keys(meses);
     const values = Object.values(meses);
 
-    new Chart(document.getElementById('chartMes'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Degustações',
-                data: values,
-                backgroundColor: '#2E7D32cc',
-                borderColor: '#1B5E20',
-                borderWidth: 2,
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: '#f0f0f0' } },
-                x: { ticks: { font: { family: 'DM Sans' } }, grid: { display: false } }
-            }
+    updateChart('chartMes', 'bar', {
+        labels,
+        datasets: [{
+            label: 'Degustações',
+            data: values,
+            backgroundColor: '#2E7D32cc',
+            borderColor: '#1B5E20',
+            borderWidth: 2,
+            borderRadius: 6,
+        }]
+    }, {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: '#f0f0f0' } },
+            x: { ticks: { font: { family: 'DM Sans' } }, grid: { display: false } }
         }
     });
 }
 
 // ── Gráfico: Por Degustador ────────────────────────────────────────────────────
 
-function renderChartDegustador() {
+function renderChartDegustador(dados) {
     const contagem = {};
-    DEGUSTACOES.forEach(d => {
+    dados.forEach(d => {
         if (!d.degustador) return;
         d.degustador.split(',').forEach(nome => {
             const n = nome.trim();
@@ -528,38 +665,33 @@ function renderChartDegustador() {
     const sorted = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
     const labels = sorted.map(e => e[0]);
     const values = sorted.map(e => e[1]);
-
     const cores = ['#1B5E20','#2E7D32','#388E3C','#43A047','#4CAF50','#66BB6A','#81C784','#A5D6A7'];
 
-    new Chart(document.getElementById('chartDegustador'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Degustações',
-                data: values,
-                backgroundColor: labels.map((_, i) => cores[i % cores.length]),
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: '#f0f0f0' } },
-                y: { ticks: { font: { family: 'DM Sans', size: 13 } }, grid: { display: false } }
-            }
+    updateChart('chartDegustador', 'bar', {
+        labels,
+        datasets: [{
+            label: 'Degustações',
+            data: values,
+            backgroundColor: labels.map((_, i) => cores[i % cores.length]),
+            borderRadius: 6,
+        }]
+    }, {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: '#f0f0f0' } },
+            y: { ticks: { font: { family: 'DM Sans', size: 13 } }, grid: { display: false } }
         }
     });
 }
 
 // ── Gráfico: Por Kit ───────────────────────────────────────────────────────────
 
-function renderChartKit() {
+function renderChartKit(dados) {
     const kits = {};
-    DEGUSTACOES.forEach(d => {
+    dados.forEach(d => {
         const k = d.kit || 'Não definido';
         kits[k] = (kits[k] || 0) + 1;
     });
@@ -568,50 +700,69 @@ function renderChartKit() {
     const values = labels.map(k => kits[k]);
     const kitCores = ['#1565C0','#1976D2','#1E88E5','#42A5F5','#90CAF9'];
 
-    new Chart(document.getElementById('chartKit'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Usos',
-                data: values,
-                backgroundColor: labels.map((_, i) => kitCores[i % kitCores.length]),
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: '#f0f0f0' } },
-                x: { ticks: { font: { family: 'DM Sans' } }, grid: { display: false } }
-            }
+    updateChart('chartKit', 'bar', {
+        labels,
+        datasets: [{
+            label: 'Usos',
+            data: values,
+            backgroundColor: labels.map((_, i) => kitCores[i % kitCores.length]),
+            borderRadius: 6,
+        }]
+    }, {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'DM Sans' } }, grid: { color: '#f0f0f0' } },
+            x: { ticks: { font: { family: 'DM Sans' } }, grid: { display: false } }
         }
     });
 }
 
+// ── Render completo ────────────────────────────────────────────────────────────
+
+function renderAll() {
+    const dados = getFiltered();
+    renderKPIs(dados);
+    renderChartStatus(dados);
+    renderChartMes(dados);
+    renderChartDegustador(dados);
+    renderChartKit(dados);
+}
+
+// ── Filtros: eventos ───────────────────────────────────────────────────────────
+
+document.getElementById('filterPeriod').addEventListener('change', e => {
+    filtros.period = e.target.value;
+    renderAll();
+});
+
+document.getElementById('statusPills').addEventListener('click', e => {
+    const pill = e.target.closest('.pill');
+    if (!pill) return;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    filtros.status = pill.dataset.status;
+    renderAll();
+});
+
 // ── Init ───────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    const total = DEGUSTACOES.length;
-    const datas = DEGUSTACOES.map(d => d.data).filter(Boolean).sort();
+    const total = TODAS_DEGUSTACOES.length;
+    const datas = TODAS_DEGUSTACOES.map(d => d.data).filter(Boolean).sort();
     const inicio = datas[0] ? new Date(datas[0] + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
     const fim    = datas[datas.length - 1] ? new Date(datas[datas.length - 1] + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
 
     document.getElementById('heroSub').textContent =
-        total ? `${total} degustações · ${inicio} a ${fim}` : 'Nenhuma degustação carregada';
+        total ? `${total} degustações no histórico · ${inicio} a ${fim}` : 'Nenhuma degustação carregada';
 
     const syncMatch = document.body.innerHTML.match(/Última sincronização: ([^\n<]+)/);
     if (syncMatch) document.getElementById('lastUpdate').textContent = 'Sincronizado em: ' + syncMatch[1].trim();
 
     if (total === 0) return;
 
-    renderKPIs();
-    renderChartStatus();
-    renderChartMes();
-    renderChartDegustador();
-    renderChartKit();
+    renderAll();
 });
 </script>
 
