@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -313,6 +314,108 @@
         .form-btn-3b { background-color: #1565C0; }
         .form-btn-4 { background-color: #9C27B0; }
         .form-btn-5 { background-color: #009688; }
+
+        /* QR Code button */
+        .btn-qr {
+            display: block;
+            width: 100%;
+            margin-top: 0.6rem;
+            padding: 0.4rem;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-qr:hover {
+            background: #f0f0f0;
+            border-color: #bbb;
+            color: #333;
+        }
+
+        /* QR Modal */
+        #qrModal .modal-content {
+            max-width: 380px;
+            text-align: center;
+        }
+
+        .qr-canvas-wrap {
+            margin: 1rem auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .qr-canvas-wrap canvas {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .qr-info {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .qr-info strong { color: #1B5E20; }
+
+        .qr-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-print {
+            flex: 1;
+            background: #1B5E20;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-print:hover { background: #2E7D32; }
+
+        .btn-maps {
+            flex: 1;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.7rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-maps:hover { background: #1976D2; }
+
+        /* Print: mostra só o QR modal */
+        @media print {
+            body > *:not(#qrModal) { display: none !important; }
+            #qrModal { position: static !important; background: none !important; }
+            #qrModal .modal-content { box-shadow: none !important; max-width: 100% !important; }
+            .qr-actions { display: none !important; }
+            .modal-close { display: none !important; }
+        }
 
         /* Empty State */
         .empty-state {
@@ -689,6 +792,25 @@
         </div>
     </div>
 
+    <!-- QR Code Modal -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="qrModalTitle">QR Code</span>
+                <button class="modal-close" onclick="closeQRModal()">&times;</button>
+            </div>
+            <div class="qr-canvas-wrap">
+                <div id="qrCanvas"></div>
+            </div>
+            <div class="qr-info" id="qrInfo"></div>
+            <div class="qr-actions">
+                <a id="qrMapsBtn" href="#" target="_blank" class="btn-maps">Maps</a>
+                <button class="btn-print" onclick="window.print()">Imprimir</button>
+                <button class="btn-cancel" onclick="closeQRModal()" style="flex:1">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <p>Supren Veg · Sistema de Degustações · Atualizado em: <span id="lastUpdate"></span></p>
@@ -893,14 +1015,14 @@ const DEGUSTACOES = [
             } else {
                 container.innerHTML = `<div class="cards-grid" id="cardsGrid"></div>`;
                 const grid = document.getElementById('cardsGrid');
-                DEGUSTACOES.forEach(d => {
-                    grid.appendChild(renderCard(d));
+                DEGUSTACOES.forEach((d, i) => {
+                    grid.appendChild(renderCard(d, i));
                 });
             }
         }
 
         // Render individual card
-        function renderCard(d) {
+        function renderCard(d, idx) {
             const card = document.createElement('div');
             card.className = 'degu-card';
 
@@ -962,6 +1084,7 @@ const DEGUSTACOES = [
                 })
             };
 
+            const cardData = JSON.stringify(d).replace(/'/g, "\\'").replace(/"/g, '&quot;');
             card.innerHTML = `
                 <span class="card-badge ${statusBadgeClass}">${d.status}</span>
                 <div class="card-title">${d.cliente}</div>
@@ -979,6 +1102,7 @@ const DEGUSTACOES = [
                     <a href="${urls.form4}" class="form-btn form-btn-4">F4</a>
                     <a href="${urls.form5}" class="form-btn form-btn-5">F5</a>
                 </div>
+                <button class="btn-qr" onclick="openQRModal(${idx})">&#x2338; QR Code</button>
             `;
 
             return card;
@@ -1079,12 +1203,73 @@ const DEGUSTACOES = [
             document.getElementById('addModal').classList.remove('show');
         }
 
+        // ── QR Code modal ──────────────────────────────────────────────────────
+
+        function openQRModal(idx) {
+            const d = DEGUSTACOES[idx];
+            if (!d) return;
+
+            // URL a codificar: Maps se tiver endereço, senão texto do evento
+            let qrContent;
+            let mapsUrl = '#';
+            if (d.endereco) {
+                mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(d.endereco);
+                qrContent = mapsUrl;
+            } else {
+                qrContent = [
+                    'Supren Veg',
+                    d.cliente,
+                    d.data_br + (d.horario ? ' ' + d.horario : ''),
+                    'Kit: ' + (d.kit || '—'),
+                    'Degustador: ' + (d.degustador || '—'),
+                ].join('\n');
+            }
+
+            // Título
+            document.getElementById('qrModalTitle').textContent = d.cliente;
+
+            // Info
+            document.getElementById('qrInfo').innerHTML = [
+                d.data_br ? `<strong>Data:</strong> ${d.data_br}${d.horario ? ' · ' + d.horario : ''}` : '',
+                d.endereco ? `<strong>Local:</strong> ${d.endereco}` : '',
+                d.degustador ? `<strong>Degustador:</strong> ${d.degustador}` : '',
+                d.kit ? `<strong>Kit:</strong> ${d.kit}` : '',
+            ].filter(Boolean).join('<br>');
+
+            // Botão Maps
+            const mapsBtn = document.getElementById('qrMapsBtn');
+            if (d.endereco) {
+                mapsBtn.href = mapsUrl;
+                mapsBtn.style.display = '';
+            } else {
+                mapsBtn.style.display = 'none';
+            }
+
+            // Gera QR code
+            const container = document.getElementById('qrCanvas');
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: qrContent,
+                width: 220,
+                height: 220,
+                colorDark: '#1B5E20',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M,
+            });
+
+            document.getElementById('qrModal').classList.add('show');
+        }
+
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.remove('show');
+        }
+
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('addModal');
-            if (event.target == modal) {
-                closeModal();
-            }
+            const addModal = document.getElementById('addModal');
+            const qrModal  = document.getElementById('qrModal');
+            if (event.target == addModal) closeModal();
+            if (event.target == qrModal)  closeQRModal();
         };
 
         // Update last update date
