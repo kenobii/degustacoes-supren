@@ -959,7 +959,7 @@
 
     <script>
         // DEGUSTAÇÕES — atualizado automaticamente pelo sincronizar_portal.py
-// Última sincronização: 31/03/2026 às 15:11
+// Última sincronização: 31/03/2026 às 19:32
 // NÃO EDITE MANUALMENTE ESTA SEÇÃO
 const DEGUSTACOES = [
   {
@@ -1017,20 +1017,6 @@ const DEGUSTACOES = [
     "kit": "Kit 01",
     "contato": "",
     "status": "Confirmado"
-  },
-  {
-    "id": "322d10bf-fb1d-8024-995a-d6738a5d87fe",
-    "cliente": "Comercial Reis",
-    "data": "2026-03-28",
-    "data_br": "28/03/2026",
-    "horario": "",
-    "vendedor": "",
-    "degustador": "Valéria",
-    "responsavel": "",
-    "endereco": "Comercial Reis Lago Norte",
-    "kit": "Kit 01",
-    "contato": "",
-    "status": "Agendado"
   },
   {
     "id": "330d10bf-fb1d-8066-974a-e6713ea395f3",
@@ -1132,6 +1118,11 @@ const DEGUSTACOES = [
   }
 ];
 
+        // Escapa HTML para prevenir XSS
+        function esc(str) {
+            return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
             updateLastUpdateDate();
@@ -1227,13 +1218,13 @@ const DEGUSTACOES = [
 
             const cardData = JSON.stringify(d).replace(/'/g, "\\'").replace(/"/g, '&quot;');
             card.innerHTML = `
-                <span class="card-badge ${statusBadgeClass}">${d.status}</span>
-                <div class="card-title">${d.cliente}</div>
+                <span class="card-badge ${statusBadgeClass}">${esc(d.status)}</span>
+                <div class="card-title">${esc(d.cliente)}</div>
                 <div class="card-info">
-                    <div class="info-item">📅 ${formattedData}</div>
-                    <div class="info-item">👤 ${d.vendedor || '—'}</div>
-                    <div class="info-item">🎯 ${d.degustador || '—'}</div>
-                    <div class="info-item">📦 ${d.kit || '—'}</div>
+                    <div class="info-item">📅 ${esc(formattedData)}</div>
+                    <div class="info-item">👤 ${esc(d.vendedor) || '—'}</div>
+                    <div class="info-item">🎯 ${esc(d.degustador) || '—'}</div>
+                    <div class="info-item">📦 ${esc(d.kit) || '—'}</div>
                 </div>
                 <div class="card-buttons">
                     <a href="${urls.form1}" class="form-btn form-btn-1">F1</a>
@@ -1378,10 +1369,10 @@ const DEGUSTACOES = [
 
             // Info
             document.getElementById('qrInfo').innerHTML = [
-                d.data_br ? `<strong>Data:</strong> ${d.data_br}${d.horario ? ' · ' + d.horario : ''}` : '',
-                d.endereco ? `<strong>Local:</strong> ${d.endereco}` : '',
-                d.degustador ? `<strong>Degustador:</strong> ${d.degustador}` : '',
-                d.kit ? `<strong>Kit:</strong> ${d.kit}` : '',
+                d.data_br ? `<strong>Data:</strong> ${esc(d.data_br)}${d.horario ? ' · ' + esc(d.horario) : ''}` : '',
+                d.endereco ? `<strong>Local:</strong> ${esc(d.endereco)}` : '',
+                d.degustador ? `<strong>Degustador:</strong> ${esc(d.degustador)}` : '',
+                d.kit ? `<strong>Kit:</strong> ${esc(d.kit)}` : '',
             ].filter(Boolean).join('<br>');
 
             // Botão Maps
