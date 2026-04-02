@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="dados.js"></script>
     <style>
         * {
@@ -327,8 +326,8 @@
         .form-btn-4 { background-color: #9C27B0; }
         .form-btn-5 { background-color: #009688; }
 
-        /* QR Code button */
-        .btn-qr {
+        /* btn-qr removed */
+        .btn-qr-unused {
             display: block;
             width: 100%;
             margin-top: 0.6rem;
@@ -934,24 +933,6 @@
         </div>
     </div>
 
-    <!-- QR Code Modal -->
-    <div id="qrModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="qrModalTitle">QR Code</span>
-                <button class="modal-close" onclick="closeQRModal()">&times;</button>
-            </div>
-            <div class="qr-canvas-wrap">
-                <div id="qrCanvas"></div>
-            </div>
-            <div class="qr-info" id="qrInfo"></div>
-            <div class="qr-actions">
-                <a id="qrMapsBtn" href="#" target="_blank" class="btn-maps">Maps</a>
-                <button class="btn-print" onclick="window.print()">Imprimir</button>
-                <button class="btn-cancel" onclick="closeQRModal()" style="flex:1">Fechar</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer>
@@ -996,6 +977,11 @@
             }
         }
 
+        // Retorna o primeiro nome de um campo (ex: "Ana, André" → "Ana")
+        function firstName(name, fallback) {
+            return (name || '').trim().split(/\s*[,\/]\s*/)[0]?.split(' ')[0] || fallback;
+        }
+
         // Render individual card
         function renderCard(d, idx) {
             const card = document.createElement('div');
@@ -1005,7 +991,8 @@
                 'Agendado': 'badge-agendado',
                 'Em andamento': 'badge-andamento',
                 'Concluído': 'badge-concluido',
-                'Cancelado': 'badge-cancelado'
+                'Cancelado': 'badge-cancelado',
+                'Finalizado': 'badge-concluido'
             }[d.status] || 'badge-agendado';
 
             const formattedData = d.data ? new Date(d.data + 'T00:00:00').toLocaleDateString('pt-BR') : '';
@@ -1070,14 +1057,13 @@
                     <div class="info-item">📦 ${esc(d.kit) || '—'}</div>
                 </div>
                 <div class="card-buttons">
-                    <a href="${urls.form1}" class="form-btn form-btn-1">F1</a>
-                    <a href="${urls.form2}" class="form-btn form-btn-2">F2</a>
-                    <a href="${urls.form3a}" class="form-btn form-btn-3a">F3A</a>
-                    <a href="${urls.form3b}" class="form-btn form-btn-3b">F3B</a>
-                    <a href="${urls.form4}" class="form-btn form-btn-4">F4</a>
-                    <a href="${urls.form5}" class="form-btn form-btn-5">F5</a>
+                    <a href="${urls.form1}" class="form-btn form-btn-1">${esc(firstName(d.vendedor, 'F1'))}</a>
+                    <a href="${urls.form2}" class="form-btn form-btn-2">${esc(firstName(d.responsavel, 'F2'))}</a>
+                    <a href="${urls.form3a}" class="form-btn form-btn-3a">${esc(firstName(d.vendedor, 'F3A'))}</a>
+                    <a href="${urls.form3b}" class="form-btn form-btn-3b">${esc(firstName(d.degustador, 'F3B'))}</a>
+                    <a href="${urls.form4}" class="form-btn form-btn-4">${esc(firstName(d.responsavel, 'F4'))}</a>
+                    ${d.status === 'Finalizado' ? `<a href="${urls.form5}" class="form-btn form-btn-5" target="_blank">📋 Relatório Final</a>` : ''}
                 </div>
-                <button class="btn-qr" onclick="openQRModal(${idx})">&#x2338; QR Code</button>
             `;
 
             return card;
@@ -1206,73 +1192,10 @@
             document.getElementById('addModal').classList.remove('show');
         }
 
-        // ── QR Code modal ──────────────────────────────────────────────────────
-
-        function openQRModal(idx) {
-            const d = DEGUSTACOES[idx];
-            if (!d) return;
-
-            // URL a codificar: Maps se tiver endereço, senão texto do evento
-            let qrContent;
-            let mapsUrl = '#';
-            if (d.endereco) {
-                mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(d.endereco);
-                qrContent = mapsUrl;
-            } else {
-                qrContent = [
-                    'Supren Veg',
-                    d.cliente,
-                    d.data_br + (d.horario ? ' ' + d.horario : ''),
-                    'Kit: ' + (d.kit || '—'),
-                    'Degustador: ' + (d.degustador || '—'),
-                ].join('\n');
-            }
-
-            // Título
-            document.getElementById('qrModalTitle').textContent = d.cliente;
-
-            // Info
-            document.getElementById('qrInfo').innerHTML = [
-                d.data_br ? `<strong>Data:</strong> ${esc(d.data_br)}${d.horario ? ' · ' + esc(d.horario) : ''}` : '',
-                d.endereco ? `<strong>Local:</strong> ${esc(d.endereco)}` : '',
-                d.degustador ? `<strong>Degustador:</strong> ${esc(d.degustador)}` : '',
-                d.kit ? `<strong>Kit:</strong> ${esc(d.kit)}` : '',
-            ].filter(Boolean).join('<br>');
-
-            // Botão Maps
-            const mapsBtn = document.getElementById('qrMapsBtn');
-            if (d.endereco) {
-                mapsBtn.href = mapsUrl;
-                mapsBtn.style.display = '';
-            } else {
-                mapsBtn.style.display = 'none';
-            }
-
-            // Gera QR code
-            const container = document.getElementById('qrCanvas');
-            container.innerHTML = '';
-            new QRCode(container, {
-                text: qrContent,
-                width: 220,
-                height: 220,
-                colorDark: '#1B5E20',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.M,
-            });
-
-            document.getElementById('qrModal').classList.add('show');
-        }
-
-        function closeQRModal() {
-            document.getElementById('qrModal').classList.remove('show');
-        }
-
         // Close modal when clicking outside
         window.onclick = function(event) {
             const addModal = document.getElementById('addModal');
-            const qrModal  = document.getElementById('qrModal');
             if (event.target == addModal) closeModal();
-            if (event.target == qrModal)  closeQRModal();
         };
 
         // Update last update date
