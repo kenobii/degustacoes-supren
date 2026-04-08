@@ -1,8 +1,8 @@
 // Supren Veg — gerado automaticamente por sincronizar_portal.py
-// Última sincronização: 01/04/2026 às 08:54
+// Última sincronização: 08/04/2026 às 12:29
 // NÃO EDITE MANUALMENTE ESTE ARQUIVO
 
-const ULTIMA_SINCRONIZACAO = "01/04/2026 \u00e0s 08:54";
+const ULTIMA_SINCRONIZACAO = "08/04/2026 \u00e0s 12:29";
 
 const DEGUSTACOES = [
   {
@@ -78,8 +78,8 @@ const DEGUSTACOES = [
   {
     "id": "330d10bf-fb1d-80eb-ae25-e4c9795230d0",
     "cliente": "Comercial Reis",
-    "data": "2026-04-04",
-    "data_br": "04/04/2026",
+    "data": "2026-04-11",
+    "data_br": "11/04/2026",
     "horario": "",
     "vendedor": "",
     "degustador": "",
@@ -87,21 +87,7 @@ const DEGUSTACOES = [
     "endereco": "",
     "kit": "Kit 01",
     "contato": "",
-    "status": "Confirmado"
-  },
-  {
-    "id": "32dd10bf-fb1d-805a-949e-ed8ee7a766b1",
-    "cliente": "Temperos & Mel (9h às 13h)",
-    "data": "2026-04-04",
-    "data_br": "04/04/2026",
-    "horario": "",
-    "vendedor": "",
-    "degustador": "",
-    "responsavel": "",
-    "endereco": "Temperos & Mel JB",
-    "kit": "Kit 01",
-    "contato": "",
-    "status": "Confirmado"
+    "status": "Agendado"
   },
   {
     "id": "32fd10bf-fb1d-8045-8623-d128a184a839",
@@ -129,7 +115,7 @@ const DEGUSTACOES = [
     "endereco": "Quadra Cln 312 Bloco C Loja 27 - Asa Norte",
     "kit": "Kit 01",
     "contato": "",
-    "status": "Agendado"
+    "status": "Confirmado"
   },
   {
     "id": "32dd10bf-fb1d-8046-afee-d2c4fe51355d",
@@ -143,7 +129,21 @@ const DEGUSTACOES = [
     "endereco": "",
     "kit": "Kit 01",
     "contato": "",
-    "status": "Confirmado"
+    "status": "Agendado"
+  },
+  {
+    "id": "32dd10bf-fb1d-805a-949e-ed8ee7a766b1",
+    "cliente": "Temperos & Mel (9h às 13h)",
+    "data": "2026-04-11",
+    "data_br": "11/04/2026",
+    "horario": "",
+    "vendedor": "",
+    "degustador": "",
+    "responsavel": "",
+    "endereco": "Temperos & Mel JB",
+    "kit": "Kit 01",
+    "contato": "",
+    "status": "Agendado"
   },
   {
     "id": "322d10bf-fb1d-80a2-b1b5-ca4c0f92c384",
@@ -235,8 +235,8 @@ const TODAS_DEGUSTACOES = [
   {
     "id": "330d10bf-fb1d-80eb-ae25-e4c9795230d0",
     "cliente": "Comercial Reis",
-    "data": "2026-04-04",
-    "data_br": "04/04/2026",
+    "data": "2026-04-11",
+    "data_br": "11/04/2026",
     "horario": "",
     "vendedor": "",
     "degustador": "",
@@ -244,21 +244,7 @@ const TODAS_DEGUSTACOES = [
     "endereco": "",
     "kit": "Kit 01",
     "contato": "",
-    "status": "Confirmado"
-  },
-  {
-    "id": "32dd10bf-fb1d-805a-949e-ed8ee7a766b1",
-    "cliente": "Temperos & Mel (9h às 13h)",
-    "data": "2026-04-04",
-    "data_br": "04/04/2026",
-    "horario": "",
-    "vendedor": "",
-    "degustador": "",
-    "responsavel": "",
-    "endereco": "Temperos & Mel JB",
-    "kit": "Kit 01",
-    "contato": "",
-    "status": "Confirmado"
+    "status": "Agendado"
   },
   {
     "id": "32fd10bf-fb1d-8045-8623-d128a184a839",
@@ -286,7 +272,7 @@ const TODAS_DEGUSTACOES = [
     "endereco": "Quadra Cln 312 Bloco C Loja 27 - Asa Norte",
     "kit": "Kit 01",
     "contato": "",
-    "status": "Agendado"
+    "status": "Confirmado"
   },
   {
     "id": "32dd10bf-fb1d-8046-afee-d2c4fe51355d",
@@ -300,7 +286,21 @@ const TODAS_DEGUSTACOES = [
     "endereco": "",
     "kit": "Kit 01",
     "contato": "",
-    "status": "Confirmado"
+    "status": "Agendado"
+  },
+  {
+    "id": "32dd10bf-fb1d-805a-949e-ed8ee7a766b1",
+    "cliente": "Temperos & Mel (9h às 13h)",
+    "data": "2026-04-11",
+    "data_br": "11/04/2026",
+    "horario": "",
+    "vendedor": "",
+    "degustador": "",
+    "responsavel": "",
+    "endereco": "Temperos & Mel JB",
+    "kit": "Kit 01",
+    "contato": "",
+    "status": "Agendado"
   },
   {
     "id": "322d10bf-fb1d-80a2-b1b5-ca4c0f92c384",

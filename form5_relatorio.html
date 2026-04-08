@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário 5 de 5 — Relatório Geral da Degustação | Supren Veg</title>
 
+    <!-- Configuração da API (gerado por sincronizar_portal.py) -->
+    <script src="api_config.js"></script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1285,18 +1288,36 @@
                 }
             });
 
-            // Form submission — salva no localStorage
-            document.getElementById('reportForm').addEventListener('submit', function(e) {
+            // Form submission — salva no localStorage e envia para a API
+            document.getElementById('reportForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 const data = collectFormData();
 
-                // Determina a chave de armazenamento
+                // Salva localmente
                 const key = degustacaoId
                     ? 'relatorio_' + degustacaoId
                     : 'relatorio_sem_id_' + (data.cliente || 'desconhecido') + '_' + (data.data_evento || '');
-
                 localStorage.setItem(key, JSON.stringify(data));
+
+                // Envia para a API (form_numero 6 = Relatório Final)
+                if (degustacaoId && window.FORMS_API_BASE && window.FORMS_API_KEY) {
+                    try {
+                        await fetch(
+                            `${window.FORMS_API_BASE}/api/forms/${degustacaoId}/6`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${window.FORMS_API_KEY}`,
+                                },
+                                body: JSON.stringify(data),
+                            }
+                        );
+                    } catch (_) {
+                        // falha silenciosa — dado já está no localStorage
+                    }
+                }
 
                 // Exibe banner de sucesso e oculta formulário
                 document.getElementById('reportForm').style.display = 'none';

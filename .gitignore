@@ -5,3 +5,4 @@ MEMORIA_PROJETO.md
 *.py
 .env
 logs/
+api_config.js
