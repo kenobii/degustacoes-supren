@@ -1,8 +1,8 @@
 // Supren Veg — gerado automaticamente por sincronizar_portal.py
-// Última sincronização: 08/04/2026 às 12:29
+// Última sincronização: 08/04/2026 às 13:45
 // NÃO EDITE MANUALMENTE ESTE ARQUIVO
 
-const ULTIMA_SINCRONIZACAO = "08/04/2026 \u00e0s 12:29";
+const ULTIMA_SINCRONIZACAO = "08/04/2026 \u00e0s 13:45";
 
 const DEGUSTACOES = [
   {
