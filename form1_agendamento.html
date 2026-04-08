@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="api_config.js"></script>
+    <script src="form_api.js"></script>
     <title>Agendamento de Degustação — Supren Veg</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -749,7 +751,6 @@
             // Monitor date changes for countdown
             document.getElementById('data_evento').addEventListener('change', atualizarCountdown);
 
-            // Form submission (though we're not actually submitting)
             document.getElementById('form-agendamento').addEventListener('submit', function(e) {
                 e.preventDefault();
             });
@@ -848,10 +849,13 @@
         }
 
         // Save and generate PDF
-        function salvarEGerar() {
+        async function salvarEGerar() {
             if (validarFormulario()) {
-                setPrintDate();
-                window.print();
+                const form = document.getElementById('form-agendamento');
+                await submitToApi(1, new FormData(form));
+                const btn = document.getElementById('btn-salvar');
+                btn.textContent = 'Enviado!';
+                btn.disabled = true;
             }
         }
 

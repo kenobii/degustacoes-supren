@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="api_config.js"></script>
+    <script src="form_api.js"></script>
     <title>Formulário 2 - Montagem do Kit e Briefing | Supren Veg</title>
 
     <!-- Google Fonts -->
@@ -818,13 +820,13 @@
         }
 
         // Form submission
-        document.getElementById('formKit').addEventListener('submit', function(e) {
+        document.getElementById('formKit').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             if (validateForm()) {
-                // In a real application, this would send data to a server
-                alert('Formulário validado com sucesso! Pronto para envio.');
-                console.log('Form data:', new FormData(this));
+                await submitToApi(2, new FormData(this));
+                this.querySelector('[type="submit"]').textContent = 'Enviado!';
+                this.querySelector('[type="submit"]').disabled = true;
             } else {
                 alert('Por favor, preencha todos os campos obrigatórios.');
             }

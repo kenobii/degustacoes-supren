@@ -344,7 +344,7 @@ def publicar_github_pages(last_update):
 
     print("\n☁️  Publicando no GitHub Pages...")
 
-    code, out, err = run("git add portal.html dashboard.html dados.js && git add -f api_config.js")
+    code, out, err = run("git add portal.html dashboard.html dados.js form_api.js form1_agendamento.html form2_kit_briefing.html form3a_vendedor.html form3b_degustador.html form4_devolucao.html form5_relatorio.html && git add -f api_config.js")
     if code != 0:
         log.error("git add falhou: %s", err)
         return

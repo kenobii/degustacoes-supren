@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="api_config.js"></script>
+  <script src="form_api.js"></script>
   <title>Form 3A — Observações da Degustação (Vendedor)</title>
 
   <!-- Google Fonts -->
@@ -753,11 +755,11 @@
         document.getElementById('data_evento').value = today;
       }
 
-      // Form submission handler (prevent default for demo)
-      document.getElementById('form3a').addEventListener('submit', function(e) {
+      document.getElementById('form3a').addEventListener('submit', async function(e) {
         e.preventDefault();
-        console.log('Form submitted:', new FormData(this));
-        alert('Formulário submetido com sucesso!');
+        await submitToApi(3, new FormData(this));
+        this.querySelector('[type="submit"]').textContent = 'Enviado!';
+        this.querySelector('[type="submit"]').disabled = true;
       });
     });
   </script>

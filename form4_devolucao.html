@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="api_config.js"></script>
+    <script src="form_api.js"></script>
     <title>Formulário 4 - Devolução do Kit e Liberação de Pagamento</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -819,10 +821,11 @@
         }
 
         // Form submission
-        function handleFormSubmit(event) {
+        async function handleFormSubmit(event) {
             event.preventDefault();
-            alert('Formulário enviado com sucesso!');
-            console.log('Form Data:', new FormData(this));
+            await submitToApi(5, new FormData(event.target));
+            event.target.querySelector('[type="submit"]').textContent = 'Enviado!';
+            event.target.querySelector('[type="submit"]').disabled = true;
         }
 
         // Reset form
