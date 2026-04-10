@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <script src="dados.js"></script>
+    <script src="api_config.js"></script>
     <style>
         * {
             margin: 0;
@@ -325,6 +326,7 @@
         .form-btn-3b { background-color: #1565C0; }
         .form-btn-4 { background-color: #9C27B0; }
         .form-btn-5 { background-color: #009688; }
+        .form-btn-relatorio { background-color: #1B5E20; border: 1px solid #2E7D32; }
 
         .relatorio-salvo-badge {
             display: inline-block;
@@ -1018,6 +1020,7 @@
 
             const urls = {
                 form1: buildUrl('form1_agendamento', {
+                    id: d.id,
                     cliente: d.cliente,
                     data: d.data,
                     vendedor: d.vendedor || '',
@@ -1026,22 +1029,26 @@
                     contato: d.vendedor || ''
                 }),
                 form2: buildUrl('form2_kit_briefing', {
+                    id: d.id,
                     responsavel: d.responsavel || '',
                     evento: evento,
                     kit: d.kit || '',
                     degustador: d.degustador || ''
                 }),
                 form3a: buildUrl('form3a_vendedor', {
+                    id: d.id,
                     vendedor: d.vendedor || '',
                     cliente: d.cliente,
                     data: d.data
                 }),
                 form3b: buildUrl('form3b_degustador', {
+                    id: d.id,
                     degustador: d.degustador || '',
                     cliente: d.cliente,
                     data: d.data
                 }),
                 form4: buildUrl('form4_devolucao', {
+                    id: d.id,
                     responsavel: d.responsavel || '',
                     evento: evento,
                     kit: d.kit || '',
@@ -1058,6 +1065,9 @@
                     kit: d.kit || ''
                 })
             };
+            const relatorioAppUrl = window.FORMS_API_BASE
+                ? `${window.FORMS_API_BASE}/degustacoes/${d.id}/relatorio`
+                : null;
 
             const temRelatorio = !!localStorage.getItem('relatorio_' + d.id);
             const mostrarForm5 = d.status !== 'Cancelado';
@@ -1079,6 +1089,7 @@
                     <a href="${urls.form3b}" class="form-btn form-btn-3b">${esc(firstName(d.degustador, 'F3B'))}</a>
                     <a href="${urls.form4}" class="form-btn form-btn-4">${esc(firstName(d.responsavel, 'F4'))}</a>
                     ${mostrarForm5 ? `<a href="${urls.form5}" class="form-btn form-btn-5">${temRelatorio ? 'Editar Rel.' : 'Relatório'}</a>` : ''}
+                    ${relatorioAppUrl ? `<a href="${relatorioAppUrl}" target="_blank" rel="noopener noreferrer" class="form-btn form-btn-relatorio" title="Ver relatório consolidado no app">Ver no App</a>` : ''}
                 </div>
             `;
 
