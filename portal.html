@@ -1089,7 +1089,7 @@
                     <a href="${urls.form3b}" class="form-btn form-btn-3b">${esc(firstName(d.degustador, 'F3B'))}</a>
                     <a href="${urls.form4}" class="form-btn form-btn-4">${esc(firstName(d.responsavel, 'F4'))}</a>
                     ${mostrarForm5 ? `<a href="${urls.form5}" class="form-btn form-btn-5">${temRelatorio ? 'Editar Rel.' : 'Relatório'}</a>` : ''}
-                    ${relatorioAppUrl ? `<a href="${relatorioAppUrl}" target="_blank" class="form-btn form-btn-relatorio" title="Ver relatório consolidado no app">Ver no App</a>` : ''}
+                    ${relatorioAppUrl ? `<a href="${relatorioAppUrl}" target="_blank" rel="noopener noreferrer" class="form-btn form-btn-relatorio" title="Ver relatório consolidado no app">Ver no App</a>` : ''}
                 </div>
             `;
 
